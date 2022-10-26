@@ -13,33 +13,36 @@ function regexHtml(tag, classAttr) {
   );
 }
 
-function parseSample(sample) {
-  const results = {
-    arrivalAddress: '',
-    arrivalTime: '',
-    departureAddress: '',
-    departureTime: '',
-  };
-
-  const regexTime = /(\d+:\d+)/gi;
+function cleanHtml(html, writeFile = false) {
   const regexComments = /<!--.*?-->/gi;
   const regexStyle = /<style.*?>.*?<\/style>/gi;
+
+  html = html.replace(regexComments, '');
+  html = html.replace(regexStyle, '');
+  if (writeFile) {
+    fs.writeFile('./newhtml.html', html, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
+  return html;
+}
+
+function getAddTime(html) {
+  const regexTime = /(\d+:\d+)/gi;
   const regexInnerHtmlStart = /^([^<]+?)/gi;
   const regexInnerHtmlEnd = /([^>]+?)$/gi;
   const regexTdAddress = regexHtml('td', ['time', '\\baddress\\b']);
   const regexSpanTime = regexHtml('span', ['time']);
   const regexSpanAddress = regexHtml('span', ['address']);
 
-  // 1 -- CLEAN (remove comments and css)
-  let html = sample.html.replace(regexComments, '');
-  html = html.replace(regexStyle, '');
-  fs.writeFile('./newhtml.html', html, (err) => {
-    if (err) {
-      console.error(err);
-    }
-  });
-
-  // 2 -- ADDRESS && TIME (td address && time)
+  const results = {
+    arrivalAddress: '',
+    arrivalTime: '',
+    departureAddress: '',
+    departureTime: '',
+  };
   const tdAddress = [...html.matchAll(regexTdAddress)];
   // console.log('results.length = ', tdAddress.length);
   // console.log(tdAddress.map((e) => [e[0], cleanStr(e[1]), e.index]));
@@ -84,6 +87,23 @@ function parseSample(sample) {
         ? (results.departureAddress = address)
         : (results.arrivalAddress = address));
   }
+  return results;
+}
+
+function parseSample(sample) {
+  let results = {
+    arrivalAddress: '',
+    arrivalTime: '',
+    departureAddress: '',
+    departureTime: '',
+  };
+
+  // 1 -- CLEAN (remove comments and css)
+  const html = cleanHtml(sample.html);
+
+  // 2 -- ADDRESS && TIME (td address && time)
+  const resultsAddTime = getAddTime(html);
+  results = { ...results, ...resultsAddTime };
 
   // 2 -- DISTANCE (distance tag)
 
