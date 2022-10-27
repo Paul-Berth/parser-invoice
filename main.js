@@ -2,26 +2,51 @@ const fs = require('fs');
 const { infosToSearch } = require('./infos');
 
 // todo:
-// clean data
-// Find Currency
+// Find Currency : innertag find € or $ or HUF...
 // Put comments
 
 function stringToNumber(str) {
   str = str.replace(',', '.');
+  str = str.replace(/\$|€|chf/, '');
   return parseFloat(str);
 }
 
+function formatTime(str) {
+  const strSplit = str.split(':');
+  if (strSplit.length == 2)
+    str = `${strSplit[0].length > 1 ? strSplit[0] : '0' + strSplit[0]}:${
+      strSplit[1].length > 1 ? strSplit[1] : '0' + strSplit[1]
+    }`;
+  if (strSplit.length == 3)
+    str = `${strSplit[0].length > 1 ? strSplit[0] : '0' + strSplit[0]}:${
+      strSplit[1].length > 1 ? strSplit[1] : '0' + strSplit[1]
+    }:${strSplit[2].length > 1 ? strSplit[2] : '0' + strSplit[2]}`;
+  return str;
+}
+
 function cleanData(data) {
-  if (typeof data?.distance == 'string')
-    data.distance = stringToNumber(data.distance);
-  if (typeof data?.distanceFee == 'string')
-    data.distanceFee = stringToNumber(data.distanceFee);
-  if (typeof data?.timeFee == 'string')
-    data.timeFee = stringToNumber(data.timeFee);
-  if (typeof data?.totalPricePaid == 'string')
-    data.totalPricePaid = stringToNumber(data.totalPricePaid);
+  typeof data?.distance == 'string' && data?.distance != ''
+    ? (data.distance = stringToNumber(data.distance))
+    : (data.distance = 0);
+  typeof data?.distanceFee == 'string' && data?.distanceFee != ''
+    ? (data.distanceFee = stringToNumber(data.distanceFee))
+    : (data.distanceFee = 0);
+  typeof data?.timeFee == 'string' && data?.timeFee != ''
+    ? (data.timeFee = stringToNumber(data.timeFee))
+    : (data.timeFee = 0);
+  typeof data?.totalPricePaid == 'string' && data?.totalPricePaid != ''
+    ? (data.totalPricePaid = stringToNumber(data.totalPricePaid))
+    : (data.totalPricePaid = 0);
   if (data?.distanceUnit?.match(/kilo|km/i)?.length > 0)
     data.distanceUnit = 'kilomètres';
+  data.arrivalTime = formatTime(data.arrivalTime);
+  data.departureTime = formatTime(data.departureTime);
+  data.duration = formatTime(data.duration);
+  typeof data?.arrondi == 'string' && data?.arrondi != ''
+    ? (data.arrondi = stringToNumber(data.arrondi))
+    : (data.arrondi = 0);
+  if (data.arrondi > 0) data.totalPricePaid -= data.arrondi;
+  delete data.arrondi;
   return data;
 }
 
@@ -140,6 +165,7 @@ function parseSample(sample) {
     distanceFee: '',
     timeFee: '',
     totalPricePaid: '',
+    arrondi: '',
   };
 
   // 1 -- CLEAN (remove comments and css)
@@ -163,13 +189,13 @@ function parseSample(sample) {
     }
   }
 
-  console.log(results);
+  // console.log(results);
   results = cleanData(results);
   // console.log(results);
   return results;
 }
 
-const sample1 = require('./samples/sample_3').default;
-parseSample(sample1);
+// const sample1 = require('./samples/sample_3').default;
+// parseSample(sample1);
 
 exports.parseSample = parseSample;

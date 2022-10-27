@@ -31,7 +31,12 @@ const infosToSearch = [
   },
   {
     words: ['total'],
-    keys: [['totalPricePaid'], ['test']],
+    keys: [['totalPricePaid']],
+    log: false,
+  },
+  {
+    words: ['arrondi'],
+    keys: [['arrondi']],
     log: false,
   },
 ];
