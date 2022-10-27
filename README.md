@@ -18,8 +18,8 @@ Good luck !
 
 # Overview
 
-- Step 1: The parser clean the HTML;
-- Step 2: The parser extract the informations from the HTML;
+- Step 1: The parser cleans the HTML;
+- Step 2: The parser extracts the informations from the HTML;
 - Step 3: The parser cleans and normalizes the data.
 
 # Extraction overview
