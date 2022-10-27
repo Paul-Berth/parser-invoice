@@ -2,9 +2,28 @@ const fs = require('fs');
 const { infosToSearch } = require('./infos');
 
 // todo:
-// Clean data to correct format
+// clean data
 // Find Currency
 // Put comments
+
+function stringToNumber(str) {
+  str = str.replace(',', '.');
+  return parseFloat(str);
+}
+
+function cleanData(data) {
+  if (typeof data?.distance == 'string')
+    data.distance = stringToNumber(data.distance);
+  if (typeof data?.distanceFee == 'string')
+    data.distanceFee = stringToNumber(data.distanceFee);
+  if (typeof data?.timeFee == 'string')
+    data.timeFee = stringToNumber(data.timeFee);
+  if (typeof data?.totalPricePaid == 'string')
+    data.totalPricePaid = stringToNumber(data.totalPricePaid);
+  if (data?.distanceUnit?.match(/kilo|km/i)?.length > 0)
+    data.distanceUnit = 'kilomètres';
+  return data;
+}
 
 function cleanStr(str) {
   return str.replace(/\s+/g, ' ').trim();
@@ -145,10 +164,12 @@ function parseSample(sample) {
   }
 
   console.log(results);
+  results = cleanData(results);
+  // console.log(results);
   return results;
 }
 
-const sample1 = require('./samples/sample_2').default;
+const sample1 = require('./samples/sample_3').default;
 parseSample(sample1);
 
 exports.parseSample = parseSample;

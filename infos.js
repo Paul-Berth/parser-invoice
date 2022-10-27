@@ -7,32 +7,32 @@ const infosToSearch = [
     ],
     onlyReg: false,
     keepBeforeAfter: true,
-    log: true,
+    log: false,
   },
   {
     words: ['kilomètre', 'kilometre'],
     keys: [['distanceUnit', 'distance']],
-    log: true,
+    log: false,
   },
   {
     words: ['durée', 'duree'],
     keys: [['duration']],
-    log: true,
+    log: false,
   },
   {
     words: ['distance'],
     keys: [['distanceFee']],
-    log: true,
+    log: false,
   },
   {
     words: ['temps'],
     keys: [['timeFee']],
-    log: true,
+    log: false,
   },
   {
-    words: ['sous-total'],
-    keys: [['totalPricePaid']],
-    log: true,
+    words: ['total'],
+    keys: [['totalPricePaid'], ['test']],
+    log: false,
   },
 ];
 
