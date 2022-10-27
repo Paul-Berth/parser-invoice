@@ -5,7 +5,6 @@ const infosToSearch = [
       ['departureAddress', 'departureTime'],
       ['arrivalAddress', 'arrivalTime'],
     ],
-    onlyReg: false,
     keepBeforeAfter: true,
     log: false,
   },
@@ -36,9 +35,11 @@ const infosToSearch = [
   },
   {
     words: ['arrondi'],
-    keys: [['arrondi']],
+    keys: [['discount']],
     log: false,
   },
 ];
 
-exports.infosToSearch = infosToSearch;
+const currencies = ['€', '\\$', 'chf'];
+
+module.exports = { infosToSearch, currencies };
